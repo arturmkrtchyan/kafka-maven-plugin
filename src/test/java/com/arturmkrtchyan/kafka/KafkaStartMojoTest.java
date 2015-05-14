@@ -4,7 +4,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class KafkaMojoTest extends AbstractMojoTestCase {
+public class KafkaStartMojoTest extends AbstractMojoTestCase {
     /**
      * {@inheritDoc}
      */
@@ -30,7 +30,7 @@ public class KafkaMojoTest extends AbstractMojoTestCase {
         assertNotNull(pom);
         assertTrue(pom.exists());
 
-        KafkaMojo kafkaMojo = (KafkaMojo) lookupMojo("start", pom);
+        KafkaStartMojo kafkaMojo = (KafkaStartMojo) lookupMojo("start", pom);
         assertNotNull(kafkaMojo);
         kafkaMojo.execute();
     }

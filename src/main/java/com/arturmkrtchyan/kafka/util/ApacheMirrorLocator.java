@@ -10,8 +10,8 @@ public class ApacheMirrorLocator {
 
 
     public String locate() {
-        String response = HttpRequest.get(APACHE_URL).body();
-        JsonObject json = JsonObject.readFrom(response);
+        final String response = HttpRequest.get(APACHE_URL).body();
+        final JsonObject json = JsonObject.readFrom(response);
         return json.getString("preferred", null);
     }
 }

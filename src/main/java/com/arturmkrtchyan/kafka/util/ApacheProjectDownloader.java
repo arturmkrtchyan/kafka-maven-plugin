@@ -10,16 +10,16 @@ import java.nio.file.Paths;
 
 public class ApacheProjectDownloader {
 
-    public Path download(String url, String projectName, Path directory) throws IOException {
-        Path projectPath = directory.resolve(projectName);
+    public Path download(final String url, final String projectName, final Path directory) throws IOException {
+        final Path projectPath = directory.resolve(projectName);
         if(!Files.exists(projectPath)) {
             download(url, projectPath);
         }
         return projectPath;
     }
 
-    private void download(String url, Path projectPath) throws IOException {
-        HttpRequest request = HttpRequest.get(url);
+    private void download(final String url, final Path projectPath) throws IOException {
+        final HttpRequest request = HttpRequest.get(url);
         if (request.ok() && request.contentLength() > 0) {
             Files.createFile(projectPath);
             request.receive(projectPath.toFile());
