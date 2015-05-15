@@ -14,14 +14,14 @@ A Maven plugin to start and stop a Kafka broker during tests.
             <configuration></configuration>
             <executions>
                 <execution>
-                    <id>preintegration</id>
+                    <id>pre-integration</id>
                     <phase>pre-integration-test</phase>
                     <goals>
                         <goal>start</goal>
                     </goals>
                 </execution>
                 <execution>
-                    <id>postintegration</id>
+                    <id>post-integration</id>
                     <phase>post-integration-test</phase>
                     <goals>
                         <goal>stop</goal>
