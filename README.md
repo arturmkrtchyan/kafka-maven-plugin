@@ -1,3 +1,3 @@
 # kafka-maven-plugin
 
-Kafka Maven Plugin
+A Maven plugin to start a Kafka broker during integration tests.
