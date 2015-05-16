@@ -10,29 +10,19 @@ import java.nio.file.Paths;
 
 public class ApacheProjectDownloader {
 
-    public Path download(final String url, final String projectName, final Path directory) throws IOException {
+    public Path download(final String url, final String projectName, final Path directory) throws IOException, RuntimeException {
         final Path projectPath = directory.resolve(projectName);
-        if(!Files.exists(projectPath)) {
-            download(url, projectPath);
-        }
+        download(url, projectPath);
         return projectPath;
     }
 
-    private void download(final String url, final Path projectPath) throws IOException {
+    private void download(final String url, final Path projectPath) throws IOException, RuntimeException {
         final HttpRequest request = HttpRequest.get(url);
         if (request.ok() && request.contentLength() > 0) {
             Files.createFile(projectPath);
             request.receive(projectPath.toFile());
+        } else {
+            throw new RuntimeException(String.format("Unable to download kafka from %s, to %s", url, projectPath.getParent().toString()));
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        ApacheProjectDownloader downloader = new ApacheProjectDownloader();
-
-        String property = "java.io.tmpdir";
-
-        String tempDir = System.getProperty(property);
-
-        downloader.download("http://mirror.dkd.de/apache/kafka/0.8.2.1/kafka_2.9.2-0.8.2.1.tgz", "kafka_2.9.2-0.8.2.1.tgz", Paths.get(tempDir));
     }
 }
