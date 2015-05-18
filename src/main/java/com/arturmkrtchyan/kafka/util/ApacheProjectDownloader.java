@@ -12,6 +12,7 @@ public class ApacheProjectDownloader {
 
     public Path download(final String url, final String projectName, final Path directory) throws IOException, RuntimeException {
         final Path projectPath = directory.resolve(projectName);
+        createDirectory(directory);
         download(url, projectPath);
         return projectPath;
     }
@@ -23,6 +24,12 @@ public class ApacheProjectDownloader {
             request.receive(projectPath.toFile());
         } else {
             throw new RuntimeException(String.format("Unable to download kafka from %s, to %s", url, projectPath.getParent().toString()));
+        }
+    }
+
+    private void createDirectory(final Path directory) throws IOException {
+        if(!Files.exists(directory)) {
+            Files.createDirectories(directory);
         }
     }
 }

@@ -6,8 +6,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
 import java.nio.file.Paths;
+
+import static com.arturmkrtchyan.kafka.KafkaFileSystemHelper.*;
 
 /**
  * Goal which starts kafka broker.
@@ -15,41 +16,51 @@ import java.nio.file.Paths;
 @Mojo(name = "start", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
 public class KafkaStartMojo extends AbstractMojo {
 
+    KafkaDownloader kafkaDownloader = new KafkaDownloader();
     KafkaManager kafkaManager = new KafkaManager();
 
-    /**
-     * Location of the file.
-     */
     @Parameter(required = true, defaultValue = "${project.build.directory}")
-    private File outputDirectory;
+    private String buildDir;
 
     /**
-     * This will turn on verbose behavior and will print out
-     * all information about the artifacts.
-     *
-     * @parameter expression="${verbose}" default-value="false"
+     * The version of the scala used in kafka build.
      */
-    @Parameter(defaultValue = "false")
-    private boolean verbose;
+    @Parameter(required = true, defaultValue = "2.9.2")
+    private String scalaVersion;
 
+    /**
+     * The version of the kafka.
+     */
+    @Parameter(required = true, defaultValue = "0.8.2.1")
+    private String kafkaVersion;
 
 
     public void execute() throws MojoExecutionException {
-        String property = "java.io.tmpdir";
 
-        String tempDir = System.getProperty(property);
+        downloadKafka();
+        System.out.println(kafkaDir(buildDir));
+        //createKafkaInstance();
 
-        if(kafkaManager.isKafkaAvailable(Paths.get(tempDir), "2.9.2", "0.8.2.1")) {
-            kafkaManager.downloadKafka(Paths.get(tempDir), "2.9.2", "0.8.2.1");
+    }
+
+    protected void downloadKafka() {
+        final String artifactName = artifactName(scalaVersion, kafkaVersion);
+
+        if(getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Checking if %s is already downloaded into %s", artifactName, KAFKA_ARTIFACT_DIR));
         }
 
+        if(!kafkaDownloader.isDownloaded(Paths.get(KAFKA_ARTIFACT_DIR), scalaVersion, kafkaVersion)) {
+            getLog().info(getDottedString());
+            getLog().info(String.format("Downloading %s into %s", artifactName, KAFKA_ARTIFACT_DIR));
+            getLog().info(getDottedString());
+
+            kafkaDownloader.download(Paths.get(KAFKA_ARTIFACT_DIR), scalaVersion, kafkaVersion);
+        }
     }
 
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
+    private String getDottedString() {
+        return "------------------------------------------------------------------------";
     }
 
-    public boolean isVerbose() {
-        return verbose;
-    }
 }
