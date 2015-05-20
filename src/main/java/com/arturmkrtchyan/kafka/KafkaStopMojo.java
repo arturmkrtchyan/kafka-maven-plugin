@@ -1,12 +1,16 @@
 package com.arturmkrtchyan.kafka;
 
+import com.arturmkrtchyan.kafka.util.TarUnpacker;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
+import java.nio.file.Path;
+
+import static com.arturmkrtchyan.kafka.KafkaFileSystemHelper.instanceDir;
+import static com.arturmkrtchyan.kafka.KafkaFileSystemHelper.instanceName;
 
 /**
  * Goal which stops kafka broker.
@@ -14,31 +18,31 @@ import java.io.File;
 @Mojo(name = "stop", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class KafkaStopMojo extends AbstractMojo {
 
-    /**
-     * Location of the file.
-     */
-    @Parameter(required = true, defaultValue = "${project.build.directory}")
-    private File outputDirectory;
+    private KafkaDownloader kafkaDownloader = new KafkaDownloader();
+    private KafkaManager kafkaManager = new KafkaManager();
+    private TarUnpacker tarUnpacker = new TarUnpacker();
+
+    @Parameter(required = true, readonly = true, defaultValue = "${project.build.directory}")
+    private String buildDir;
 
     /**
-     * This will turn on verbose behavior and will print out
-     * all information about the artifacts.
-     *
-     * @parameter expression="${verbose}" default-value="false"
+     * The version of the scala used in kafka build.
      */
-    @Parameter(defaultValue = "false")
-    private boolean verbose;
+    @Parameter(required = true, defaultValue = "2.9.2")
+    private String scalaVersion;
 
+    /**
+     * The version of the kafka.
+     */
+    @Parameter(required = true, defaultValue = "0.8.2.1")
+    private String kafkaVersion;
 
 
     public void execute() throws MojoExecutionException {
+
+        final Path instancePath = instanceDir(buildDir).resolve(instanceName(scalaVersion, kafkaVersion));
+
+        kafkaManager.stopZookeeper(instancePath);
     }
 
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    public boolean isVerbose() {
-        return verbose;
-    }
 }

@@ -23,14 +23,14 @@ public class TarUnpacker {
     /**
      * Unpack the archive to specified directory.
      *
-     * @param inputPath  tar or tar.gz file Path
+     * @param archivePath  tar or tar.gz file Path
      * @param outputPath destination Path
      * @param isGzipped true if the file is gzipped.
      * @return true in case of success, otherwise - false
      */
-    public boolean unpack(final Path inputPath, final Path outputPath, final boolean isGzipped) throws IOException {
+    public boolean unpack(final Path archivePath, final Path outputPath, final boolean isGzipped) throws IOException {
         boolean result = false;
-        try (final InputStream inputStream = Files.newInputStream(inputPath);
+        try (final InputStream inputStream = Files.newInputStream(archivePath);
              final TarArchiveInputStream tarArchiveInputStream = createTarArchiveInputStream(inputStream, isGzipped)) {
             result = unpack(tarArchiveInputStream, outputPath);
         }
@@ -69,22 +69,17 @@ public class TarUnpacker {
         return true;
     }
 
-    protected void setPermissions(int mode, Path path) throws IOException {
-        PosixFileAttributeView attributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class);
+    protected void setPermissions(final int mode, final Path path) throws IOException {
+        final PosixFileAttributeView attributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class);
         if(attributeView != null) {
             attributeView.setPermissions(PosixFilePermissionConverter.convertToPermissionsSet(mode));
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        TarUnpacker unpacker = new TarUnpacker();
-        unpacker.unpack(Paths.get("/tmp/kafka_2.9.2-0.8.2.1.tgz"), Paths.get("/tmp/"), true);
-    }
-
     private static class PosixFilePermissionConverter {
 
-        static Set<PosixFilePermission> convertToPermissionsSet(int mode) {
-            Set<PosixFilePermission> result = EnumSet.noneOf(PosixFilePermission.class);
+        static Set<PosixFilePermission> convertToPermissionsSet(final int mode) {
+            final Set<PosixFilePermission> result = EnumSet.noneOf(PosixFilePermission.class);
 
             if (isSet(mode, 0400)) {
                 result.add(OWNER_READ);
@@ -117,11 +112,11 @@ public class TarUnpacker {
             return result;
         }
 
-        private static boolean isSet(int mode, int testbit) {
+        private static boolean isSet(final int mode, final int testbit) {
             return (mode & testbit) == testbit;
         }
 
-        public static int convertToInt(Set<PosixFilePermission> permissions) {
+        public static int convertToInt(final Set<PosixFilePermission> permissions) {
             int result = 0;
             if (permissions.contains(OWNER_READ)) {
                 result = result | 0400;

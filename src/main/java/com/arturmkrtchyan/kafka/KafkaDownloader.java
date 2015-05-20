@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class KafkaDownloader {
 
-    public void download(Path localBasePath, String scalaVersion, String kafkaVersion) throws KafkaPluginException {
+    public void download(final Path localBasePath, final String scalaVersion, final String kafkaVersion) throws KafkaPluginException {
         final ApacheProjectDownloader apacheProjectDownloader = new ApacheProjectDownloader();
         final ApacheMirrorLocator apacheMirrorLocator = new ApacheMirrorLocator();
         final String mirrorUrl = apacheMirrorLocator.locate();
@@ -24,8 +24,8 @@ public class KafkaDownloader {
         }
     }
 
-    public boolean isDownloaded(final Path localBasePath, final String scalaVersion, final String kafkaVersion) {
-        return Files.exists(localBasePath.resolve(KafkaFileSystemHelper.artifactName(scalaVersion, kafkaVersion)));
+    public boolean isDownloaded(final Path kafkaFile) {
+        return Files.exists(kafkaFile);
     }
 
     protected String artifactUrl(final String mirrorUrl, final String kafkaVersion, final String artifactName) {
