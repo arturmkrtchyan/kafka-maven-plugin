@@ -10,43 +10,83 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * KafkaManager to start and stop zookeeper and kafka instances.
+ */
 public class KafkaManager {
 
-    Logger logger = LoggerFactory.getLogger(KafkaManager.class);
+    final Logger logger = LoggerFactory.getLogger(KafkaManager.class);
 
-    public boolean startKafka(final Path instancePath) {
-        return false;
+    /**
+     * Starts a kafka instance.
+     *
+     * @param instancePath Kafka instance path
+     * @throws KafkaPluginException if fails to start an instance
+     */
+    public void startKafka(final Path instancePath) {
+        try {
+            executeInBackground(instancePath.toString() + "/bin/kafka-server-start.sh",
+                    instancePath.toString() + "/config/server.properties");
+            wait(7);
+
+            logger.debug(execute("jps", "-v"));
+        } catch (Exception e) {
+            throw new KafkaPluginException(String.format("Unable to start kafka instance based on %s", instancePath.toString()), e);
+        }
     }
 
-    public boolean stopKafka() {
-        return false;
+    /**
+     * Stops a kafka instance.
+     *
+     * @param instancePath Kafka instance path
+     * @throws KafkaPluginException if fails to stop an instance
+     */
+    public void stopKafka(final Path instancePath) {
+        try {
+            executeInBackground(instancePath.toString() + "/bin/kafka-server-stop.sh");
+            wait(5);
+
+            logger.debug(execute("jps", "-v"));
+        } catch (Exception e) {
+            throw new KafkaPluginException(String.format("Unable to start kafka instance based on %s", instancePath.toString()), e);
+        }
     }
 
-    protected boolean startZookeeper(final Path instancePath) {
+    /**
+     * Starts a zookeeper instance.
+     *
+     * @param instancePath Kafka instance path
+     * @throws KafkaPluginException if fails to stop an instance
+     */
+    protected void startZookeeper(final Path instancePath) {
         try {
             executeInBackground(instancePath.toString() + "/bin/zookeeper-server-start.sh",
                     instancePath.toString() + "/config/zookeeper.properties");
             wait(7);
 
-            logger.debug(execute("jps"));
+            logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
             throw new KafkaPluginException(String.format("Unable to start zookeeper instance based on %s", instancePath.toString()), e);
         }
-        return false;
     }
 
-    protected boolean stopZookeeper(final Path instancePath) {
+    /**
+     * Stops a zookeeper instance.
+     *
+     * @param instancePath Kafka instance path
+     * @throws KafkaPluginException if fails to stop an instance
+     */
+    protected void stopZookeeper(final Path instancePath) {
         try {
             executeInBackground(instancePath.toString() + "/bin/zookeeper-server-stop.sh");
             wait(5);
-            logger.debug(execute("jps"));
+            logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
             throw new KafkaPluginException(String.format("Unable to stop zookeeper instance based on %s", instancePath.toString()), e);
         }
-        return false;
     }
 
-    private void wait(int seconds) {
+    private void wait(final int seconds) {
         try {
             TimeUnit.SECONDS.sleep(seconds);
         } catch (InterruptedException e) {
@@ -54,11 +94,11 @@ public class KafkaManager {
         }
     }
 
-    private void executeInBackground(String... commands) throws IOException {
+    private void executeInBackground(final String... commands) throws IOException {
         new ProcessExecutor().command(Arrays.asList(commands)).start();
     }
 
-    private String execute(String... commands) throws InterruptedException, TimeoutException, IOException {
+    private String execute(final String... commands) throws InterruptedException, TimeoutException, IOException {
         return new ProcessExecutor().command(Arrays.asList(commands))
                     .readOutput(true).execute()
                     .outputUTF8();
