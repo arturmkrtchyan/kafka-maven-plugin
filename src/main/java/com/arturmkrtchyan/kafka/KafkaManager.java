@@ -6,7 +6,9 @@ import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class KafkaManager {
 
@@ -22,13 +24,11 @@ public class KafkaManager {
 
     protected boolean startZookeeper(final Path instancePath) {
         try {
-            new ProcessExecutor().command(instancePath.toString() + "/bin/zookeeper-server-start.sh",
-                    instancePath.toString() + "/config/zookeeper.properties").start();
-            TimeUnit.SECONDS.sleep(10);
-            String output = new ProcessExecutor().command("jps")
-                    .readOutput(true).execute()
-                    .outputUTF8();
-            logger.debug(output);
+            executeInBackground(instancePath.toString() + "/bin/zookeeper-server-start.sh",
+                    instancePath.toString() + "/config/zookeeper.properties");
+            wait(7);
+
+            logger.debug(execute("jps"));
         } catch (Exception e) {
             throw new KafkaPluginException(String.format("Unable to start zookeeper instance based on %s", instancePath.toString()), e);
         }
@@ -37,16 +37,31 @@ public class KafkaManager {
 
     protected boolean stopZookeeper(final Path instancePath) {
         try {
-            new ProcessExecutor().command(instancePath.toString() + "/bin/zookeeper-server-stop.sh").start();
-            TimeUnit.SECONDS.sleep(5);
-            String output = new ProcessExecutor().command("jps")
-                    .readOutput(true).execute()
-                    .outputUTF8();
-            logger.debug(output);
+            executeInBackground(instancePath.toString() + "/bin/zookeeper-server-stop.sh");
+            wait(5);
+            logger.debug(execute("jps"));
         } catch (Exception e) {
             throw new KafkaPluginException(String.format("Unable to stop zookeeper instance based on %s", instancePath.toString()), e);
         }
         return false;
+    }
+
+    private void wait(int seconds) {
+        try {
+            TimeUnit.SECONDS.sleep(seconds);
+        } catch (InterruptedException e) {
+            logger.warn("Thread was interupted.", e);
+        }
+    }
+
+    private void executeInBackground(String... commands) throws IOException {
+        new ProcessExecutor().command(Arrays.asList(commands)).start();
+    }
+
+    private String execute(String... commands) throws InterruptedException, TimeoutException, IOException {
+        return new ProcessExecutor().command(Arrays.asList(commands))
+                    .readOutput(true).execute()
+                    .outputUTF8();
     }
 }
 
