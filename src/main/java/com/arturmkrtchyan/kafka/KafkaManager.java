@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -20,75 +19,75 @@ public class KafkaManager {
     /**
      * Starts a kafka instance.
      *
-     * @param instancePath Kafka instance path
+     * @param instance Kafka instance
      * @throws KafkaPluginException if fails to start an instance
      */
-    public void startKafka(final Path instancePath) {
+    public void startKafka(final KafkaInstance instance) {
         try {
-            executeInBackground(instancePath.toString() + "/bin/kafka-server-start.sh",
-                    instancePath.toString() + "/config/server.properties");
-            wait(7);
-
+            executeInBackground(instance.getStartupScript().toString(), instance.getConfig().toString());
+            wait(7, TimeUnit.SECONDS);
             logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
-            throw new KafkaPluginException(String.format("Unable to start kafka instance based on %s", instancePath.toString()), e);
+            throw new KafkaPluginException(String.format("Unable to start kafka instance based on %s",
+                    instance.getPath().toString()), e);
         }
     }
 
     /**
      * Stops a kafka instance.
      *
-     * @param instancePath Kafka instance path
+     * @param instance Kafka instance
      * @throws KafkaPluginException if fails to stop an instance
      */
-    public void stopKafka(final Path instancePath) {
+    public void stopKafka(final KafkaInstance instance) {
         try {
-            executeInBackground(instancePath.toString() + "/bin/kafka-server-stop.sh");
-            wait(5);
-
+            executeInBackground(instance.getShutdownScript().toString());
+            wait(5, TimeUnit.SECONDS);
             logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
-            throw new KafkaPluginException(String.format("Unable to start kafka instance based on %s", instancePath.toString()), e);
+            throw new KafkaPluginException(String.format("Unable to stop kafka instance based on %s",
+                    instance.getPath().toString()), e);
         }
     }
 
     /**
      * Starts a zookeeper instance.
      *
-     * @param instancePath Kafka instance path
+     * @param instance Kafka instance
      * @throws KafkaPluginException if fails to stop an instance
      */
-    protected void startZookeeper(final Path instancePath) {
+    protected void startZookeeper(final KafkaInstance instance) {
         try {
-            executeInBackground(instancePath.toString() + "/bin/zookeeper-server-start.sh",
-                    instancePath.toString() + "/config/zookeeper.properties");
-            wait(7);
-
+            executeInBackground(instance.getZookeeperStartupScript().toString(),
+                    instance.getZookeeperConfig().toString());
+            wait(7, TimeUnit.SECONDS);
             logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
-            throw new KafkaPluginException(String.format("Unable to start zookeeper instance based on %s", instancePath.toString()), e);
+            throw new KafkaPluginException(String.format("Unable to start zookeeper instance based on %s",
+                    instance.getPath().toString()), e);
         }
     }
 
     /**
      * Stops a zookeeper instance.
      *
-     * @param instancePath Kafka instance path
+     * @param instance Kafka instance
      * @throws KafkaPluginException if fails to stop an instance
      */
-    protected void stopZookeeper(final Path instancePath) {
+    protected void stopZookeeper(final KafkaInstance instance) {
         try {
-            executeInBackground(instancePath.toString() + "/bin/zookeeper-server-stop.sh");
-            wait(5);
+            executeInBackground(instance.getZookeeperShutdownScript().toString());
+            wait(5, TimeUnit.SECONDS);
             logger.debug(execute("jps", "-v"));
         } catch (Exception e) {
-            throw new KafkaPluginException(String.format("Unable to stop zookeeper instance based on %s", instancePath.toString()), e);
+            throw new KafkaPluginException(String.format("Unable to stop zookeeper instance based on %s",
+                    instance.getPath().toString()), e);
         }
     }
 
-    private void wait(final int seconds) {
+    private void wait(final int seconds, TimeUnit unit) {
         try {
-            TimeUnit.SECONDS.sleep(seconds);
+            unit.sleep(seconds);
         } catch (InterruptedException e) {
             logger.warn("Thread was interupted.", e);
         }

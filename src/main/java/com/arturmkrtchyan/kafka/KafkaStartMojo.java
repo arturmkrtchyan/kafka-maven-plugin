@@ -24,14 +24,14 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
     public void execute() throws MojoExecutionException {
 
         downloadKafka();
-        Path instancePath = createKafkaInstance();
+        KafkaInstance instance = createKafkaInstance();
 
-        getKafkaManager().startZookeeper(instancePath);
-        getKafkaManager().startKafka(instancePath);
+        getKafkaManager().startZookeeper(instance);
+        getKafkaManager().startKafka(instance);
     }
 
 
-    private Path createKafkaInstance() {
+    protected KafkaInstance createKafkaInstance() {
 
         final Path artifactPath = artifactPath(getScalaVersion(), getKafkaVersion());
         final Path instanceDir = instanceDir(getBuildDir());
@@ -42,7 +42,7 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
         } catch (IOException e) {
             throw new KafkaPluginException(String.format("Unable to unpack kafka from %s into %s", artifactPath, instanceDir), e);
         }
-        return instanceDir.resolve(instanceName(getScalaVersion(), getKafkaVersion()));
+        return KafkaInstance.fromPath(instanceDir.resolve(instanceName(getScalaVersion(), getKafkaVersion())));
     }
 
     protected void downloadKafka() {

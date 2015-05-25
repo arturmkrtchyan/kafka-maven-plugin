@@ -17,11 +17,13 @@ public class KafkaStopMojo extends AbstractKafkaMojo {
 
 
     public void execute() throws MojoExecutionException {
+        getKafkaManager().stopKafka(getRunningKafkaInstance());
+        getKafkaManager().stopZookeeper(getRunningKafkaInstance());
+    }
 
+    protected KafkaInstance getRunningKafkaInstance() {
         final Path instancePath = instanceDir(getBuildDir()).resolve(instanceName(getScalaVersion(), getKafkaVersion()));
-
-        getKafkaManager().stopKafka(instancePath);
-        getKafkaManager().stopZookeeper(instancePath);
+        return KafkaInstance.fromPath(instancePath);
     }
 
 }
