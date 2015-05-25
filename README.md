@@ -10,7 +10,7 @@ A Maven plugin to start and stop a Kafka broker during tests.
         <plugin>
             <groupId>com.arturmkrtchyan</groupId>
             <artifactId>kafka-maven-plugin</artifactId>
-            <version>1.0.0</version>
+            <version>0.0.1</version>
             <configuration></configuration>
             <executions>
                 <execution>
