@@ -29,6 +29,9 @@ import java.util.concurrent.TimeoutException;
  */
 public class KafkaManager {
 
+    public static final String KAFKA_PROCESS_NAME = "Kafka";
+    public static final String ZOOKEEPER_PROCESS_NAME = "QuorumPeerMain";
+
     final Logger logger = LoggerFactory.getLogger(KafkaManager.class);
 
     /**
