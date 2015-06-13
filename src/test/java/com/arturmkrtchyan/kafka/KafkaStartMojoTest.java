@@ -52,13 +52,22 @@ public class KafkaStartMojoTest {
         for(final Process process : zookeeperProcessesAfter) {
             processMonitor.killProcess(process);
         }
+    }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
         FileUtils.deleteDirectory(Paths.get(KAFKA_ARTIFACT_DIR).toFile());
     }
 
     @Test
-    public void testExecute() throws Exception {
+    public void executeMultipleTimesShouldSucceed() throws Exception {
+        for(int i = 0; i < 3; i++) {
+            executeShouldSucceed();
+        }
+    }
 
+    @Test
+    public void executeShouldSucceed() throws Exception {
         startMojo.execute();
 
         kafkaProcessesAfter = processMonitor.getProcesses(KafkaManager.KAFKA_PROCESS_NAME);
