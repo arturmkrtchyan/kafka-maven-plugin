@@ -132,6 +132,26 @@
                 <groupId>com.arturmkrtchyan.kafka</groupId>
                 <artifactId>kafka-maven-plugin</artifactId>
                 <version>0.0.2-SNAPSHOT</version>
+                <configuration>
+                    <scalaVersion>2.9.2</scalaVersion>
+                    <kafkaVersion>0.8.2.1</kafkaVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-integration</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
