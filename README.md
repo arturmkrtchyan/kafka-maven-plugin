@@ -37,7 +37,7 @@ A Maven plugin to start and stop a Kafka broker during tests.
 </build>
 ```
 
-### This plugin has 3 goals:
+**This plugin has 3 goals:**
 
 - kafka:help
   - Display help information on kafka-maven-plugin.
