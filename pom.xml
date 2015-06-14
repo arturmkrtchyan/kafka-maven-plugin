@@ -131,7 +131,7 @@
             <plugin>
                 <groupId>com.arturmkrtchyan.kafka</groupId>
                 <artifactId>kafka-maven-plugin</artifactId>
-                <version>0.0.2-SNAPSHOT</version>
+                <version>0.0.1</version>
                 <configuration>
                     <scalaVersion>2.9.2</scalaVersion>
                     <kafkaVersion>0.8.2.1</kafkaVersion>
