@@ -33,6 +33,10 @@ public class KafkaInstance {
         return path;
     }
 
+    public Path getLogs() {
+        return getPath().resolve("tmp/kafka-logs");
+    }
+
     public Path getStartupScript() {
         return getPath().resolve("bin/kafka-server-start.sh");
     }
@@ -56,4 +60,9 @@ public class KafkaInstance {
     public Path getZookeeperConfig() {
         return getPath().resolve("config/zookeeper.properties");
     }
+
+    public Path getZookeeperData() {
+        return getPath().resolve("tmp/zookeeper");
+    }
+
 }

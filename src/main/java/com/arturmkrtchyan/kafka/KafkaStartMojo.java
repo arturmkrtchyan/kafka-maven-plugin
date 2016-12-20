@@ -20,9 +20,16 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import static com.arturmkrtchyan.kafka.KafkaFileSystemHelper.*;
 
@@ -40,6 +47,14 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
 
         downloadKafka();
         KafkaInstance instance = createKafkaInstance();
+
+        Conf.fromPath(instance.getConfig())
+            .merge("log.dirs", instance.getLogs().toString())
+            .merge(getServer());
+
+        Conf.fromPath(instance.getZookeeperConfig())
+            .merge("dataDir", instance.getZookeeperData().toString())
+            .merge(getZookeeper());
 
         getKafkaManager().startZookeeper(instance);
         getKafkaManager().startKafka(instance);

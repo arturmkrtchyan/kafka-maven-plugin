@@ -11,10 +11,10 @@ A Maven plugin to start and stop a Kafka broker during tests.
         <plugin>
             <groupId>com.arturmkrtchyan.kafka</groupId>
             <artifactId>kafka-maven-plugin</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.3-SNAPSHOT</version>
             <configuration>
-                <scalaVersion>2.9.2</scalaVersion>
-                <kafkaVersion>0.8.2.1</kafkaVersion>
+                <scalaVersion>2.10</scalaVersion>
+                <kafkaVersion>0.10.1.0</kafkaVersion>
             </configuration>
             <executions>
                 <execution>
@@ -45,3 +45,49 @@ A Maven plugin to start and stop a Kafka broker during tests.
   - Goal which starts kafka broker.
 - kafka:stop
   - Goal which stops kafka broker.
+
+By default kafka logs and zookeeper data stored under **target/kafka/version**  folder.  Can be overwritten by passing corresponding kafka or zookeeper configuration properties.
+
+**Passing kafka and zookeeper properties**
+
+Optional `zookeeper` and `server` sections under plugin configuration. All provided key value pairs will be passed down to appropriate config files.
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.arturmkrtchyan.kafka</groupId>
+            <artifactId>kafka-maven-plugin</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <configuration>
+                <scalaVersion>2.10</scalaVersion>
+                <kafkaVersion>0.10.1.0</kafkaVersion>
+                    <server>                
+                        <log.dirs>${project.build.directory}/kafka-logs</log.dirs>
+                        <delete.topic.enable>true</delete.topic.enable>
+                        <auto.create.topics.enable>true</auto.create.topics.enable>
+                    </server>
+                    <zookeeper>
+                        <dataDir>${project.build.directory}/zookeeper</dataDir>
+                    </zookeeper>                
+            </configuration>
+            <executions>
+                <execution>
+                    <id>pre-integration</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>start</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>post-integration</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>stop</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```

@@ -19,6 +19,8 @@ package com.arturmkrtchyan.kafka;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Map;
+
 public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     private KafkaManager kafkaManager = new KafkaManager();
@@ -40,6 +42,12 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
      */
     @Parameter(required = true, defaultValue = "0.8.2.1")
     private String kafkaVersion;
+
+    @Parameter
+    private Map server;
+
+    @Parameter
+    private Map zookeeper;
 
     protected String getDottedString() {
         return "------------------------------------------------------------------------";
@@ -65,5 +73,25 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     protected String getKafkaVersion() {
         return kafkaVersion;
+    }
+
+    protected Map getServer()
+    {
+        return server;
+    }
+
+    protected void setServer(Map server)
+    {
+        this.server = server;
+    }
+
+    protected Map getZookeeper()
+    {
+        return zookeeper;
+    }
+
+    protected void setZookeeper(Map zookeeper)
+    {
+        this.zookeeper = zookeeper;
     }
 }
