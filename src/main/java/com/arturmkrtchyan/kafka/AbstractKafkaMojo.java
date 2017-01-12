@@ -19,6 +19,8 @@ package com.arturmkrtchyan.kafka;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractKafkaMojo extends AbstractMojo {
@@ -48,6 +50,12 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     @Parameter
     private Map zookeeper;
+
+    /**
+     * List of topic names to pre-create after kafka broker started
+     */
+    @Parameter
+    private List<String> topics;
 
     protected String getDottedString() {
         return "------------------------------------------------------------------------";
@@ -93,5 +101,15 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
     protected void setZookeeper(Map zookeeper)
     {
         this.zookeeper = zookeeper;
+    }
+
+    protected List<String> getTopics()
+    {
+        return topics;
+    }
+
+    protected void setTopics(List<String> topics)
+    {
+        this.topics = topics;
     }
 }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -58,6 +59,16 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
 
         getKafkaManager().startZookeeper(instance);
         getKafkaManager().startKafka(instance);
+
+        List<String> topics = getTopics();
+
+        if(topics!=null)
+        {
+            for (String topic : topics)
+            {
+                getKafkaManager().createTopic(instance, topic);
+            }
+        }
     }
 
 

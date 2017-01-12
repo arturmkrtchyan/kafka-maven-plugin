@@ -15,7 +15,11 @@
  */
 package com.arturmkrtchyan.kafka;
 
+import javafx.util.StringConverter;
+
 import java.nio.file.Path;
+
+import static java.lang.String.format;
 
 public class KafkaInstance {
 
@@ -65,4 +69,8 @@ public class KafkaInstance {
         return getPath().resolve("tmp/zookeeper");
     }
 
+    public Path getCreateTopicCommand()
+    {
+        return getPath().resolve("bin/kafka-topics.sh");
+    }
 }

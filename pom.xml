@@ -19,7 +19,7 @@
 
     <groupId>com.arturmkrtchyan.kafka</groupId>
     <artifactId>kafka-maven-plugin</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>kafka-maven-plugin</name>
