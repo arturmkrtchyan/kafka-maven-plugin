@@ -92,7 +92,7 @@ Optional `zookeeper` and `server` sections under plugin configuration. All provi
 </build>
 ```
 
-** Pre-create kafka topics during startup **
+**Pre-create kafka topics during startup**
 
 Optionally configure list of topic names to pre-create via `topics` parameter.
 
