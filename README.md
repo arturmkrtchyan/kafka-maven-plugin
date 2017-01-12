@@ -91,3 +91,43 @@ Optional `zookeeper` and `server` sections under plugin configuration. All provi
     </plugins>
 </build>
 ```
+
+** Pre-create kafka topics during startup **
+
+Optionally configure list of topic names to pre-create via `topics` parameter.
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.arturmkrtchyan.kafka</groupId>
+            <artifactId>kafka-maven-plugin</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <configuration>
+                <scalaVersion>2.10</scalaVersion>
+                <kafkaVersion>0.10.1.0</kafkaVersion>
+				<topics>
+					<param>my-test-topic</param>
+					<param>my-another-test-topic</param>
+				</topics>                
+            </configuration>
+            <executions>
+                <execution>
+                    <id>pre-integration</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>start</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>post-integration</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>stop</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
