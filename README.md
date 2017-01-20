@@ -15,6 +15,7 @@ A Maven plugin to start and stop a Kafka broker during tests.
             <configuration>
                 <scalaVersion>2.10</scalaVersion>
                 <kafkaVersion>0.10.1.0</kafkaVersion>
+                <skip>${skipITs}</skip>
             </configuration>
             <executions>
                 <execution>
