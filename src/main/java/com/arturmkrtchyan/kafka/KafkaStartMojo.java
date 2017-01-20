@@ -46,6 +46,11 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
 
     public void execute() throws MojoExecutionException {
 
+        if(isSkip())
+        {
+            return;
+        }
+
         downloadKafka();
         KafkaInstance instance = createKafkaInstance();
 

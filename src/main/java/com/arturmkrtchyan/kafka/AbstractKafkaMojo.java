@@ -27,6 +27,9 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     private KafkaManager kafkaManager = new KafkaManager();
 
+    @Parameter(required = false, readonly = true, defaultValue = "false")
+    private boolean skip;
+
     /**
      * The Project build directory which is defaulting to ${project.build.directory}
      */
@@ -81,6 +84,10 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     protected String getKafkaVersion() {
         return kafkaVersion;
+    }
+
+    protected boolean isSkip() {
+        return skip;
     }
 
     protected Map getServer()
