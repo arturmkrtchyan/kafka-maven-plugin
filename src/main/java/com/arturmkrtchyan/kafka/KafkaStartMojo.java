@@ -101,7 +101,7 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
             getLog().info(String.format("Downloading %s into %s", artifactName, KAFKA_ARTIFACT_DIR));
             getLog().info(getDottedString());
 
-            kafkaDownloader.download(Paths.get(KAFKA_ARTIFACT_DIR), getScalaVersion(), getKafkaVersion());
+            kafkaDownloader.download(getKafkaLocation(), Paths.get(KAFKA_ARTIFACT_DIR), getScalaVersion(), getKafkaVersion());
         } else {
             debug(String.format("%s is already downloaded into %s", artifactName, KAFKA_ARTIFACT_DIR));
         }

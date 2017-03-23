@@ -132,3 +132,41 @@ Optionally configure list of topic names to pre-create via `topics` parameter.
     </plugins>
 </build>
 ```
+
+**Provide alternate kafka distribution location**
+
+Optionally one can provide `kafkaLocation` param to point to download url for specific kafka version instead of official
+Apache mirror network.
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.arturmkrtchyan.kafka</groupId>
+            <artifactId>kafka-maven-plugin</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <configuration>
+                <scalaVersion>2.10</scalaVersion>
+                <kafkaVersion>0.10.1.0</kafkaVersion>
+				<kafkaLocation>http://internal-maven-repo.mycorp/kafka/kafka_2.10-0.10.1.0.tgz</kafkaLocation>               
+            </configuration>
+            <executions>
+                <execution>
+                    <id>pre-integration</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>start</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>post-integration</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>stop</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
