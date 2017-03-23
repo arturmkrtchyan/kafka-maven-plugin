@@ -24,17 +24,34 @@ import java.nio.file.Path;
 
 public class KafkaDownloader {
 
-    public void download(final Path localBasePath, final String scalaVersion, final String kafkaVersion) throws KafkaPluginException {
-        final ApacheProjectDownloader apacheProjectDownloader = new ApacheProjectDownloader();
-        final ApacheMirrorLocator apacheMirrorLocator = new ApacheMirrorLocator();
-        final String mirrorUrl = apacheMirrorLocator.locate();
-        final String artifactName = KafkaFileSystemHelper.artifactName(scalaVersion, kafkaVersion);
-        final String artifactUrl = artifactUrl(mirrorUrl, kafkaVersion, artifactName);
+    public void download(final String location, final Path localBasePath, final String scalaVersion, final String kafkaVersion) throws KafkaPluginException {
 
-        try {
-            apacheProjectDownloader.download(artifactUrl, artifactName, localBasePath);
-        } catch (IOException | RuntimeException e) {
-            throw new KafkaPluginException(String.format("Unable to download %s from %s", artifactName, artifactUrl), e);
+        final ApacheProjectDownloader apacheProjectDownloader = new ApacheProjectDownloader();
+        final String artifactName = KafkaFileSystemHelper.artifactName(scalaVersion, kafkaVersion);
+
+        if(location == null || location.trim().length() == 0) //Use Apache mirror network
+        {
+            final ApacheMirrorLocator apacheMirrorLocator = new ApacheMirrorLocator();
+            final String mirrorUrl = apacheMirrorLocator.locate();
+            final String artifactUrl = artifactUrl(mirrorUrl, kafkaVersion, artifactName);
+
+            try
+            {
+                apacheProjectDownloader.download(artifactUrl, artifactName, localBasePath);
+            }
+            catch (IOException | RuntimeException e) {
+                throw new KafkaPluginException(String.format("Unable to download %s from %s", artifactName, artifactUrl), e);
+            }
+        }
+        else //Use provided artifact url
+        {
+            try
+            {
+                apacheProjectDownloader.download(location, artifactName, localBasePath);
+            }
+            catch (IOException | RuntimeException e) {
+                throw new KafkaPluginException(String.format("Unable to download %s from %s", artifactName, location), e);
+            }
         }
     }
 

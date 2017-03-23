@@ -19,9 +19,16 @@ package com.arturmkrtchyan.kafka;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     private KafkaManager kafkaManager = new KafkaManager();
+
+    @Parameter(required = false, readonly = true, defaultValue = "false")
+    private boolean skip;
 
     /**
      * The Project build directory which is defaulting to ${project.build.directory}
@@ -40,6 +47,25 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
      */
     @Parameter(required = true, defaultValue = "0.8.2.1")
     private String kafkaVersion;
+
+
+    /**
+     * The location of the kafka distributions, if omitted will use official Apache mirrors network
+     */
+    @Parameter(required = false)
+    private String kafkaLocation;
+
+    @Parameter
+    private Map server;
+
+    @Parameter
+    private Map zookeeper;
+
+    /**
+     * List of topic names to pre-create after kafka broker started
+     */
+    @Parameter
+    private List<String> topics;
 
     protected String getDottedString() {
         return "------------------------------------------------------------------------";
@@ -65,5 +91,44 @@ public abstract class AbstractKafkaMojo extends AbstractMojo {
 
     protected String getKafkaVersion() {
         return kafkaVersion;
+    }
+
+    protected boolean isSkip() {
+        return skip;
+    }
+
+    protected Map getServer()
+    {
+        return server;
+    }
+
+    protected void setServer(Map server)
+    {
+        this.server = server;
+    }
+
+    protected Map getZookeeper()
+    {
+        return zookeeper;
+    }
+
+    protected void setZookeeper(Map zookeeper)
+    {
+        this.zookeeper = zookeeper;
+    }
+
+    protected List<String> getTopics()
+    {
+        return topics;
+    }
+
+    protected void setTopics(List<String> topics)
+    {
+        this.topics = topics;
+    }
+
+    protected  String getKafkaLocation()
+    {
+        return kafkaLocation;
     }
 }

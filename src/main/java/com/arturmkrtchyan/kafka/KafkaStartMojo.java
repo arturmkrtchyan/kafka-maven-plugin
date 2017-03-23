@@ -20,9 +20,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import static com.arturmkrtchyan.kafka.KafkaFileSystemHelper.*;
 
@@ -38,11 +46,34 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
 
     public void execute() throws MojoExecutionException {
 
+        if(isSkip())
+        {
+            return;
+        }
+
         downloadKafka();
         KafkaInstance instance = createKafkaInstance();
 
+        Conf.fromPath(instance.getConfig())
+            .merge("log.dirs", instance.getLogs().toString())
+            .merge(getServer());
+
+        Conf.fromPath(instance.getZookeeperConfig())
+            .merge("dataDir", instance.getZookeeperData().toString())
+            .merge(getZookeeper());
+
         getKafkaManager().startZookeeper(instance);
         getKafkaManager().startKafka(instance);
+
+        List<String> topics = getTopics();
+
+        if(topics!=null)
+        {
+            for (String topic : topics)
+            {
+                getKafkaManager().createTopic(instance, topic);
+            }
+        }
     }
 
 
@@ -70,7 +101,7 @@ public class KafkaStartMojo extends AbstractKafkaMojo {
             getLog().info(String.format("Downloading %s into %s", artifactName, KAFKA_ARTIFACT_DIR));
             getLog().info(getDottedString());
 
-            kafkaDownloader.download(Paths.get(KAFKA_ARTIFACT_DIR), getScalaVersion(), getKafkaVersion());
+            kafkaDownloader.download(getKafkaLocation(), Paths.get(KAFKA_ARTIFACT_DIR), getScalaVersion(), getKafkaVersion());
         } else {
             debug(String.format("%s is already downloaded into %s", artifactName, KAFKA_ARTIFACT_DIR));
         }

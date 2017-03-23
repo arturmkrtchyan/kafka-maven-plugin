@@ -103,6 +103,23 @@ public class KafkaManager {
         }
     }
 
+    protected void createTopic(final KafkaInstance instance, String topic)
+    {
+        try {
+            executeInBackground(instance.getCreateTopicCommand().toString(),
+                                "--create",
+                                "--zookeeper", "localhost:2181",
+                                "--replication-factor", "1",
+                                "--partitions", "1",
+                                "--topic", topic);
+
+            wait(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new KafkaPluginException(String.format("Unable to create topic %s, based on %s",
+                                                         topic, instance.getPath().toString()), e);
+        }
+    }
+
     private void wait(final int seconds, TimeUnit unit) {
         try {
             unit.sleep(seconds);

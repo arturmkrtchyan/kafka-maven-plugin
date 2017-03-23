@@ -32,6 +32,12 @@ public class KafkaStopMojo extends AbstractKafkaMojo {
 
 
     public void execute() throws MojoExecutionException {
+
+        if(isSkip())
+        {
+            return;
+        }
+
         getKafkaManager().stopKafka(getRunningKafkaInstance());
         getKafkaManager().stopZookeeper(getRunningKafkaInstance());
     }
